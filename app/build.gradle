@@ -12,15 +12,33 @@ android {
         versionName "1.0"
     }
     buildTypes {
+
+        debug {
+            buildConfigField "String", "WEATHER_APP_ID", "\"${getOpenWeatherMapApiKey()}\""
+        }
+
         release {
             minifyEnabled false
+            buildConfigField "String", "WEATHER_APP_ID", "\"${getOpenWeatherMapApiKey()}\""
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
 
+def getOpenWeatherMapApiKey() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty('weatherApiKey')
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
     testCompile 'junit:junit:4.12'
+
+    compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'io.reactivex:rxjava:1.1.0'
+    compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
+
     compile 'com.android.support:appcompat-v7:23.1.1'
 }
