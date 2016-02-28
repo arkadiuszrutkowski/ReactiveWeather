@@ -1,4 +1,4 @@
-package com.requem.reactiveweather;
+package com.reactiveweather;
 
 import org.junit.Test;
 
