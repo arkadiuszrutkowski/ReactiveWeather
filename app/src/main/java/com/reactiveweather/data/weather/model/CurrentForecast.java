@@ -15,4 +15,14 @@ public class CurrentForecast {
 
     @SerializedName("sys")
     public Country country;
+
+    @Override
+    public String toString() {
+        return "CurrentForecast{" +
+                "city='" + city + '\'' +
+                ", weatherList=" + weatherList +
+                ", main=" + main +
+                ", country=" + country +
+                '}';
+    }
 }

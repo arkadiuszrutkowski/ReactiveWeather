@@ -1,5 +1,6 @@
 package com.reactiveweather.ui.main;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.reactiveweather.R;
 import com.reactiveweather.ReactiveWeatherApplication;
 import com.reactiveweather.data.weather.model.CurrentForecast;
+import com.reactiveweather.ui.PresenterCache;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
         ButterKnife.bind(this);
 
         if (savedInstanceState != null) {
-            presenter = ReactiveWeatherApplication.get(this).getPresenterCache().restore(MainActivity.class);
+            presenter = PresenterCache.getCache().restore(savedInstanceState);
         } else {
             presenter = new MainPresenter();
         }
@@ -72,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        ReactiveWeatherApplication.get(this).getPresenterCache().save(MainActivity.class, presenter);
+        PresenterCache.getCache().save(presenter, outState);
     }
 
     @Override
@@ -82,6 +84,14 @@ public class MainActivity extends AppCompatActivity implements MainView {
         Glide.with(MainActivity.this)
                 .load("http://openweathermap.org/img/w/" + forecast.weatherList.get(0).icon + ".png")
                 .into((ImageView) findViewById(R.id.image_weather_icon));
+    }
+
+    @Override
+    public void updateErrorMessage(String message) {
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle("Oops!")
+                .setMessage("Something went wrong...")
+                .show();
     }
 
     @Override

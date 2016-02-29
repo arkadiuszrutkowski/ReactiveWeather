@@ -6,4 +6,6 @@ import com.reactiveweather.ui.base.BaseView;
 public interface MainView extends BaseView {
 
     void updateCurrentForecast(CurrentForecast forecast);
+
+    void updateErrorMessage(String message);
 }

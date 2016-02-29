@@ -12,7 +12,6 @@ import rx.schedulers.Schedulers;
 
 public class ReactiveWeatherApplication extends Application {
     private OpenWeatherApi openWeatherApi;
-    private PresenterCache presenterCache;
     private Scheduler subscriberScheduler;
     private Scheduler observerScheduler;
 
@@ -27,15 +26,6 @@ public class ReactiveWeatherApplication extends Application {
 
     public void setOpenWeatherApi(OpenWeatherApi openWeatherApi) {
         this.openWeatherApi = openWeatherApi;
-    }
-
-    public PresenterCache getPresenterCache() {
-        if (presenterCache == null) presenterCache = new PresenterCache();
-        return presenterCache;
-    }
-
-    public void setPresenterCache(PresenterCache presenterCache) {
-        this.presenterCache = presenterCache;
     }
 
     public Scheduler getSubscriberScheduler() {

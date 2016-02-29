@@ -1,19 +1,35 @@
 package com.reactiveweather.ui;
 
+import android.os.Bundle;
+
 import com.reactiveweather.ui.base.BasePresenter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class PresenterCache {
-    private final Map<Class<?>, BasePresenter<?>> presenterCache = new LinkedHashMap<>();
+    private static final String BUNDLE_PRESENTER_ID = "BUNDLE_PRESENTER_ID";
+    private final Map<Long, BasePresenter<?>> presenterCache = new LinkedHashMap<>();
+    private final AtomicLong presenterId = new AtomicLong();
 
-    public void save(Class<?> viewType, BasePresenter<?> presenter) {
-        presenterCache.put(viewType, presenter);
+    public static PresenterCache getCache() {
+        return InstanceHolder.INSTANCE;
+    }
+
+    public void save(BasePresenter<?> presenter, Bundle outState) {
+        long id = presenterId.getAndIncrement();
+        outState.putLong(BUNDLE_PRESENTER_ID, id);
+        presenterCache.put(id, presenter);
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends BasePresenter<?>> T restore(Class<?> viewType) {
-        return (T) presenterCache.remove(viewType);
+    public <T extends BasePresenter<?>> T restore(Bundle savedState) {
+        long id = savedState.getLong(BUNDLE_PRESENTER_ID);
+        return (T) presenterCache.remove(id);
+    }
+
+    private static final class InstanceHolder {
+        private static final PresenterCache INSTANCE = new PresenterCache();
     }
 }
