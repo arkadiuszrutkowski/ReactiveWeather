@@ -1,9 +1,9 @@
 package com.reactiveweather.ui.main;
 
 import android.app.AlertDialog;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
@@ -22,10 +22,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -66,26 +65,32 @@ public class MainActivity extends AppCompatActivity {
 
     private void searchCurrentWeather(String city, String unit) {
         OpenWeatherApi api = ReactiveWeatherApplication.get(this).getOpenWeatherApi();
-        Call<CurrentForecast> call = api.getCurrentWeather(city, BuildConfig.WEATHER_APP_ID, unit);
-        call.enqueue(new Callback<CurrentForecast>() {
-            @Override
-            public void onResponse(Response<CurrentForecast> response, Retrofit retrofit) {
-                CurrentForecast forecast = response.body();
-                Log.d(TAG, forecast.toString());
-                cityNameTextView.setText(getString(R.string.text_city_country, forecast.city, forecast.country.country));
-                temperatureTextView.setText(getString(R.string.temperature, (int) forecast.main.temp));
-                Glide.with(MainActivity.this)
-                        .load("http://openweathermap.org/img/w/" + forecast.weatherList.get(0).icon + ".png")
-                        .into((ImageView) findViewById(R.id.image_weather_icon));
-            }
+        api.getCurrentWeather(city, BuildConfig.WEATHER_APP_ID, unit)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<CurrentForecast>() {
+                    @Override
+                    public void onCompleted() {
 
-            @Override
-            public void onFailure(Throwable t) {
-                new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("Oops!")
-                        .setMessage("Something went wrong...")
-                        .show();
-            }
-        });
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("Oops!")
+                                .setMessage("Something went wrong...")
+                                .show();
+                    }
+
+                    @Override
+                    public void onNext(CurrentForecast forecast) {
+                        Log.d(TAG, forecast.toString());
+                        cityNameTextView.setText(getString(R.string.text_city_country, forecast.city, forecast.country.country));
+                        temperatureTextView.setText(getString(R.string.temperature, (int) forecast.main.temp));
+                        Glide.with(MainActivity.this)
+                                .load("http://openweathermap.org/img/w/" + forecast.weatherList.get(0).icon + ".png")
+                                .into((ImageView) findViewById(R.id.image_weather_icon));
+                    }
+                });
     }
 }

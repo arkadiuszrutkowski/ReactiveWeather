@@ -6,10 +6,7 @@ import com.reactiveweather.data.weather.api.OpenWeatherApi;
 import com.reactiveweather.data.weather.model.CurrentForecast;
 import com.reactiveweather.ui.base.BasePresenter;
 
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import rx.Observer;
 
 public class MainPresenter extends BasePresenter<MainView> {
     private static final String TAG = MainPresenter.class.getSimpleName();
@@ -18,17 +15,24 @@ public class MainPresenter extends BasePresenter<MainView> {
         ReactiveWeatherApplication application = ReactiveWeatherApplication.get(getView().getContext());
 
         OpenWeatherApi api = application.getOpenWeatherApi();
-        Call<CurrentForecast> call = api.getCurrentWeather(city, BuildConfig.WEATHER_APP_ID, unit);
-        call.enqueue(new Callback<CurrentForecast>() {
-            @Override
-            public void onResponse(Response<CurrentForecast> response, Retrofit retrofit) {
-                getView().updateCurrentForecast(response.body());
-            }
+        api.getCurrentWeather(city, BuildConfig.WEATHER_APP_ID, unit)
+                .subscribeOn(ReactiveWeatherApplication.get(getView().getContext()).getSubscriberScheduler())
+                .observeOn(ReactiveWeatherApplication.get(getView().getContext()).getObserverScheduler())
+                .subscribe(new Observer<CurrentForecast>() {
+                    @Override
+                    public void onCompleted() {
 
-            @Override
-            public void onFailure(Throwable t) {
-                getView().updateErrorMessage(t.getMessage());
-            }
-        });
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        getView().updateErrorMessage(e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(CurrentForecast currentForecast) {
+                        getView().updateCurrentForecast(currentForecast);
+                    }
+                });
     }
 }

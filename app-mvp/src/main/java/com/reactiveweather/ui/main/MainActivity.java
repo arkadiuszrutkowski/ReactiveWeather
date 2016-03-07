@@ -2,9 +2,8 @@ package com.reactiveweather.ui.main;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
@@ -14,18 +13,16 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.reactiveweather.R;
-import com.reactiveweather.ReactiveWeatherApplication;
 import com.reactiveweather.data.weather.model.CurrentForecast;
-import com.reactiveweather.ui.PresenterCache;
+import com.reactiveweather.ui.base.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
 
-public class MainActivity extends AppCompatActivity implements MainView {
+public class MainActivity extends BaseActivity<MainView, MainPresenter> implements MainView {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private MainPresenter presenter;
 
     @Bind(R.id.edit_text_city)
     EditText cityEditText;
@@ -38,19 +35,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
-        if (savedInstanceState != null) {
-            presenter = PresenterCache.getCache().restore(savedInstanceState);
-        } else {
-            presenter = new MainPresenter();
-        }
-        presenter.attach(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        presenter.detach();
-        super.onDestroy();
     }
 
     @SuppressWarnings("unused")
@@ -72,12 +56,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        PresenterCache.getCache().save(presenter, outState);
-    }
-
-    @Override
     public void updateCurrentForecast(CurrentForecast forecast) {
         Log.d(TAG, forecast.toString());
         cityNameTextView.setText(getString(R.string.text_city_country, forecast.city, forecast.country.country));
@@ -96,6 +74,16 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     @Override
     public Context getContext() {
+        return this;
+    }
+
+    @Override
+    protected MainPresenter newPresenter() {
+        return new MainPresenter();
+    }
+
+    @Override
+    protected MainView getPresenterView() {
         return this;
     }
 }

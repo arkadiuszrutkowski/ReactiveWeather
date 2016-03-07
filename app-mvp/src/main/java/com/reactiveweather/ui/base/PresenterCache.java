@@ -1,14 +1,12 @@
-package com.reactiveweather.ui;
+package com.reactiveweather.ui.base;
 
 import android.os.Bundle;
-
-import com.reactiveweather.ui.base.BasePresenter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class PresenterCache {
+class PresenterCache {
     private static final String BUNDLE_PRESENTER_ID = "BUNDLE_PRESENTER_ID";
     private final Map<Long, BasePresenter<?>> presenterCache = new LinkedHashMap<>();
     private final AtomicLong presenterId = new AtomicLong();
