@@ -2,4 +2,5 @@
     <string name="app_name">Reactive Weather MVP</string>
     <string name="hint_enter_the_city_name">Enter the city name</string>
     <string name="text_city_country">%1$s, %2$s</string>
+    <string name="temperature">%1$d °</string>
 </resources>

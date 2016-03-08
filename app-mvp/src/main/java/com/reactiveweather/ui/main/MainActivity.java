@@ -30,6 +30,9 @@ public class MainActivity extends BaseActivity<MainView, MainPresenter> implemen
     @Bind(R.id.text_city_name)
     TextView cityNameTextView;
 
+    @Bind(R.id.temperature_text_view)
+    TextView temperatureTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +62,7 @@ public class MainActivity extends BaseActivity<MainView, MainPresenter> implemen
     public void updateCurrentForecast(CurrentForecast forecast) {
         Log.d(TAG, forecast.toString());
         cityNameTextView.setText(getString(R.string.text_city_country, forecast.city, forecast.country.country));
+        temperatureTextView.setText(getString(R.string.temperature, (int) forecast.main.temp));
         Glide.with(MainActivity.this)
                 .load("http://openweathermap.org/img/w/" + forecast.weatherList.get(0).icon + ".png")
                 .into((ImageView) findViewById(R.id.image_weather_icon));

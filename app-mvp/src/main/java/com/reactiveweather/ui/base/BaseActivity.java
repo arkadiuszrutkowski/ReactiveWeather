@@ -13,6 +13,7 @@ public abstract class BaseActivity<V extends BaseView, P extends BasePresenter<V
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Check for retained presenter
         if (savedInstanceState != null) {
             presenter = PresenterCache.getCache().restore(savedInstanceState);
         } else {
@@ -30,6 +31,7 @@ public abstract class BaseActivity<V extends BaseView, P extends BasePresenter<V
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        // Save presenter during configuration change
         PresenterCache.getCache().save(presenter, outState);
     }
 
