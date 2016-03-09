@@ -16,6 +16,7 @@ By app itself:
 * ButterKnife
 * Retrofit
 * RxJavaCallAdapter (for Retrofit)
+* GsonConverter (for Retrofit)
 * RxJava/RxAndroid
 * Glide
 
@@ -40,7 +41,7 @@ The `app-mvp` directory showcases improved project using MVP pattern. Model laye
 
 `BaseActivity` is basic logic for managing presenter’s lifecycle so it’s reused by derived activities. `PresenterCache` stores current presenter while configuration change is happening. After activity recreation presenter is restored from `savedInstanceState`. It’s really handy when presenter is doing heavy background work and restarting it would have big impact on app performance and user time. Unit tests could be written easily because logic and views are decoupled and can be mocked. `MainPresenterTest` simply test presenter’s interaction with view and model. 
 
-## License
+# License
 
 ```
 Licensed under the Apache License, Version 2.0 (the "License");
